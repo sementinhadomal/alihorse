@@ -158,11 +158,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutCustomInput = document.getElementById('checkoutCustomValue');
     const btnDoarAgora = document.getElementById('btnDoarAgora');
     
+    // UI steps inside the modal
+    const stepInputDiv = document.getElementById('checkoutStepInput');
+    const stepPixDiv = document.getElementById('checkoutStepPix');
+    const pixQrImg = document.getElementById('pixQrImg');
+    const pixCodeText = document.getElementById('pixCodeText');
+    const btnCopyPix = document.getElementById('btnCopyPix');
+    const btnBackToInput = document.getElementById('btnBackToInput');
+
+    // Input fields
+    const inputName = document.getElementById('donorName');
+    const inputEmail = document.getElementById('donorEmail');
+    const inputCpf = document.getElementById('donorCpf');
+    
     let currentSelectedValue = '50'; // default starting choice
+
+    // Format CPF typing helper
+    if (inputCpf) {
+        inputCpf.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length > 11) val = val.substring(0, 11);
+            if (val.length > 9) {
+                val = `${val.substring(0,3)}.${val.substring(3,6)}.${val.substring(6,9)}-${val.substring(9)}`;
+            } else if (val.length > 6) {
+                val = `${val.substring(0,3)}.${val.substring(3,6)}.${val.substring(6)}`;
+            } else if (val.length > 3) {
+                val = `${val.substring(0,3)}.${val.substring(3)}`;
+            }
+            e.target.value = val;
+        });
+    }
 
     const openCheckout = (initialValue = '') => {
         checkoutModal.classList.add('active');
         checkoutModal.setAttribute('aria-hidden', 'false');
+        
+        // Reset states
+        stepInputDiv.style.display = 'block';
+        stepPixDiv.style.display = 'none';
         
         if (initialValue) {
             currentSelectedValue = initialValue;
@@ -241,18 +274,127 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Checkout submission simulation
+    // CPF validator function
+    function isValidCPF(cpf) {
+        const cleanCpf = cpf.replace(/\D/g, '');
+        if (cleanCpf.length !== 11) return false;
+        if (/^(\d)\1{10}$/.test(cleanCpf)) return false;
+        
+        let sum = 0;
+        let remainder;
+        for (let i = 1; i <= 9; i++) {
+            sum += parseInt(cleanCpf.substring(i - 1, i)) * (11 - i);
+        }
+        remainder = (sum * 10) % 11;
+        if ((remainder === 10) || (remainder === 11)) remainder = 0;
+        if (remainder !== parseInt(cleanCpf.substring(9, 10))) return false;
+        
+        sum = 0;
+        for (let i = 1; i <= 10; i++) {
+            sum += parseInt(cleanCpf.substring(i - 1, i)) * (12 - i);
+        }
+        remainder = (sum * 10) % 11;
+        if ((remainder === 10) || (remainder === 11)) remainder = 0;
+        if (remainder !== parseInt(cleanCpf.substring(10, 11))) return false;
+        
+        return true;
+    }
+
+    // Checkout submission - Pix Generation Call
     if (btnDoarAgora) {
-        btnDoarAgora.addEventListener('click', () => {
+        btnDoarAgora.addEventListener('click', async () => {
             const finalVal = currentSelectedValue || checkoutCustomInput.value;
+            const name = inputName.value.trim();
+            const email = inputEmail.value.trim();
+            const cpf = inputCpf.value.trim();
+
             if (!finalVal || parseFloat(finalVal) <= 0) {
                 alert('Por favor, selecione ou digite um valor de doação válido.');
                 return;
             }
-            
-            // Simulation of integration
-            alert(`Obrigado pela sua intenção de doar R$ ${finalVal}! Esta seção está pronta para integração com Mercado Pago ou Stripe.`);
-            closeCheckout();
+            if (!name) {
+                alert('Por favor, digite seu nome completo.');
+                return;
+            }
+            if (!email || !email.includes('@')) {
+                alert('Por favor, digite um e-mail válido.');
+                return;
+            }
+            if (!cpf || !isValidCPF(cpf)) {
+                alert('Por favor, digite um CPF válido.');
+                return;
+            }
+
+            // Show loading state
+            btnDoarAgora.disabled = true;
+            btnDoarAgora.innerText = 'GERANDO COBRANÇA PIX...';
+
+            try {
+                const response = await fetch('/api/create-pix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amount: finalVal,
+                        name: name,
+                        email: email,
+                        cpf: cpf
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Não foi possível gerar a transação no momento.');
+                }
+
+                // Render dynamic QR Code & Code in Step 2
+                pixQrImg.src = data.pix_qr_code;
+                pixCodeText.value = data.pix_copia_cola;
+
+                // Move UI to Pix Display step
+                stepInputDiv.style.display = 'none';
+                stepPixDiv.style.display = 'block';
+
+            } catch (err) {
+                alert(`Erro: ${err.message}`);
+            } finally {
+                btnDoarAgora.disabled = false;
+                btnDoarAgora.innerText = '❤️ GERAR PIX DE DOAÇÃO';
+            }
+        });
+    }
+
+    // Copy Pix Chave to Clipboard
+    if (btnCopyPix && pixCodeText) {
+        btnCopyPix.addEventListener('click', () => {
+            pixCodeText.select();
+            pixCodeText.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(pixCodeText.value)
+                .then(() => {
+                    const originalText = btnCopyPix.innerText;
+                    btnCopyPix.innerText = 'Copiado!';
+                    btnCopyPix.style.backgroundColor = 'var(--color-success)';
+                    btnCopyPix.style.color = 'var(--color-white)';
+                    
+                    setTimeout(() => {
+                        btnCopyPix.innerText = originalText;
+                        btnCopyPix.style.backgroundColor = 'var(--color-primary)';
+                        btnCopyPix.style.color = 'var(--color-white)';
+                    }, 2000);
+                })
+                .catch(() => {
+                    alert('Erro ao copiar chave. Selecione o texto e copie manualmente.');
+                });
+        });
+    }
+
+    // Go back from QR screen to values screen
+    if (btnBackToInput) {
+        btnBackToInput.addEventListener('click', () => {
+            stepPixDiv.style.display = 'none';
+            stepInputDiv.style.display = 'block';
         });
     }
 
