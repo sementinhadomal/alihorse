@@ -1,0 +1,6 @@
+<svg width="500" height="500" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Fundo transparente com contorno do Coração em Azul Escuro e detalhes em Laranja -->
+    <path d="M50 88C50 88 18 60 18 38C18 20 32 10 50 25C68 10 82 20 82 38C82 60 50 88 50 88Z" fill="#123A72" fill-opacity="0.08" stroke="#123A72" stroke-width="2"/>
+    <path d="M38 35C40 28 45 22 52 24C58 26 59 34 54 38C50 41 42 46 39 52C38 54 37 56 38 58M58 56C59 52 64 45 68 47C71 48 70 54 66 58C62 62 55 68 50 74" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M48 24C44 26 40 30 38 35C35 42 32 46 29 48" stroke="#123A72" stroke-width="3" stroke-linecap="round"/>
+</svg>
