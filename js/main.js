@@ -104,6 +104,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Video Play Cards on Demand (Hidden/Removed placeholder)
     // Note: Video play features are ready for when video links are provided.
+    const btnPlayHeroVideo = document.getElementById('btnPlayHeroVideo');
+    const heroMediaContainer = document.getElementById('heroMediaContainer');
+    
+    if (btnPlayHeroVideo && heroMediaContainer) {
+        btnPlayHeroVideo.addEventListener('click', () => {
+            const videoEl = document.createElement('video');
+            videoEl.setAttribute('src', 'assets/videos/video_principal.mp4');
+            videoEl.setAttribute('autoplay', 'true');
+            videoEl.setAttribute('loop', 'true');
+            videoEl.setAttribute('muted', 'true'); // Muted as requested
+            videoEl.setAttribute('playsinline', 'true');
+            videoEl.setAttribute('controls', 'true');
+            videoEl.style.width = '100%';
+            videoEl.style.height = '100%';
+            videoEl.style.objectFit = 'cover';
+            
+            heroMediaContainer.innerHTML = '';
+            heroMediaContainer.appendChild(videoEl);
+        });
+    }
 
     // 6. Checkout Modal & Donation Value Selection
     const checkoutModal = document.getElementById('checkoutModal');
