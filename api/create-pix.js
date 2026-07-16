@@ -46,44 +46,48 @@ export default async function handler(req, res) {
         // Parse amount to cents (common standard for payment gateways)
         const amountInCents = Math.round(parseFloat(amount) * 100);
 
-        // ParadisePags standard API call
-        // Adjust endpoint URL when actual endpoint is confirmed in credentials
-        const response = await fetch('https://multi.paradisepags.com/api/v1/transactions', {
+        // ParadisePags standard API call according to api-contract.md
+        const response = await fetch('https://multi.paradisepags.com/api/v1/transaction.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-API-Key': apiKey
             },
             body: JSON.stringify({
-                payment_method: 'pix',
                 amount: amountInCents,
-                customer: {
-                    name: name || 'Doador Anônimo',
-                    email: email || 'doador@alicavalos.org',
-                    document: cpf ? cpf.replace(/\D/g, '') : '00000000000'
-                },
                 description: 'Doação Ali Cavalos Resgates',
-                metadata: {
-                    project: 'ali-cavalos-resgates'
+                reference: 'ali_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+                source: 'api_externa', // Bypasses productHash validation
+                customer: {
+                    name: name || 'Doador Anonimo',
+                    email: email || 'doador@alicavalos.org',
+                    document: cpf ? cpf.replace(/\D/g, '') : '00000000000',
+                    phone: '11999999999' // Required parameter (numbers only)
                 }
             })
         });
 
         const data = await response.json();
 
-        if (!response.ok) {
-            return res.status(response.status).json({ 
+        if (!response.ok || data.status === 'error') {
+            return res.status(response.status || 400).json({ 
                 error: data.message || 'Erro ao processar pagamento junto à gateway.' 
             });
         }
 
-        // Return standard structure returned by gateway (adjust if actual payload changes)
+        // Format qr_code image source
+        let qrCodeImage = data.qr_code_base64 || '';
+        if (qrCodeImage && !qrCodeImage.startsWith('data:')) {
+            qrCodeImage = 'data:image/png;base64,' + qrCodeImage;
+        }
+
+        // Return standard structure returned by gateway
         return res.status(200).json({
             success: true,
-            pix_copia_cola: data.pix_copia_cola || data.pix_code || data.qrcode_text,
-            pix_qr_code: data.pix_qr_code || data.qrcode_url || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.pix_copia_cola || '')}`,
+            pix_copia_cola: data.qr_code,
+            pix_qr_code: qrCodeImage || `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(data.qr_code || '')}`,
             amount: amount,
-            transaction_id: data.id
+            transaction_id: data.transaction_id
         });
 
     } catch (err) {
