@@ -39,10 +39,23 @@ module.exports = async (req, res) => {
         parts: [{
             text: `Você é o próprio "Ali", fundador do "Ali Resgate Cavalos". Um protetor de animais humilde, batalhador e extremamente apaixonado por salvar cavalos de situações de rua, abandono, fome e maus-tratos.
 Seu objetivo é conversar de forma amigável, acolhedora e humilde com os visitantes do site, tirando dúvidas sobre o abrigo e persuadindo-os a fazer uma doação Pix para apoiar na compra de ração, alfafa, medicamentos e cirurgias dos cavalos.
+
+Você está totalmente preparado para responder as seguintes perguntas frequentes do projeto:
+- Para onde vai minha doação?
+  Toda contribuição financeira é direcionada para custear a compra direta de feno, vacinas, honorários de cirurgias, combustível para locomoção da caminhonete de resgate, e manutenção básica do sítio de reabilitação.
+- Como acompanho os resgates?
+  Publicamos diariamente as atualizações de todos os casos e novos resgates em nossa rede social do Instagram e enviamos boletins aos doadores.
+- Vocês possuem veterinários parceiros?
+  Sim. Contamos com a parceria de clínicas de grandes animais e veterinários de campo especializados que atendem as emergências do projeto e oferecem descontos solidários.
+- Posso ajudar de outra forma? Aceitam voluntários?
+  Com certeza. Aceitamos doações em insumos diretamente no nosso sítio (feno, sacos de ração, remédios, cabrestos). Também abrimos vagas periódicas para voluntários interessados em ajudar no trato direto dos cavalos aos finais de semana.
+- Posso fazer doações mensais?
+  Sim. Através de doações frequentes via Pix, você pode apoiar mensalmente o nosso projeto, garantindo uma receita fixa para o sustento contínuo das baias do projeto.
+
 Instruções de conduta:
 1. Responda em Português do Brasil com frases acolhedoras, empáticas e sinceras.
 2. Use termos humanos e simples.
-3. Se perguntarem como doar, indique que eles podem fechar a conversa de chat e clicar no botão dourado/laranja "QUERO AJUDAR AGORA" na tela principal para abrir a doação Pix dinâmica a partir de R$ 5.
+3. Se quiserem doar, mencione que podem usar os botões rápidos de valor ("Doar agora: R$ 20, R$ 30, R$ 50, R$ 100") no próprio chat ou fechar o chat e clicar no botão dourado/laranja "QUERO AJUDAR AGORA".
 4. Escreva respostas curtas (máximo de 3 parágrafos) para manter a leitura agradável no celular.`
         }]
     };
@@ -96,17 +109,25 @@ Instruções de conduta:
 
 function simulateFallbackResponse(messages, res) {
     const lastUserMessage = messages[messages.length - 1].content.toLowerCase();
-    let reply = "Olá, tudo bem? Eu sou o próprio Ali! 🐴 Aqui no nosso abrigo, nós cuidamos de dezenas de cavalos que sofreram maus-tratos ou foram abandonados nas ruas. Todo o nosso trabalho é sustentado por doações de pessoas de bom coração. Como posso ajudar você hoje?";
+    let reply = "Olá! Eu sou o próprio Ali. 🐴 Cuidamos de dezenas de cavalos resgatados e dependemos de ajuda externa para feno, veterinário e remédios. Como posso te ajudar hoje? (Você também pode usar as opções rápidas de valores abaixo para doar!)";
     
-    if (lastUserMessage.includes('como') || lastUserMessage.includes('doar') || lastUserMessage.includes('ajudar') || lastUserMessage.includes('pix') || lastUserMessage.includes('pagar') || lastUserMessage.includes('valor')) {
-        reply = "Para doar é muito simples e ajuda a salvar vidas! Basta fechar este chat e clicar no botão **'QUERO AJUDAR AGORA'** no topo da página. O modal de doação vai se abrir para você escolher o valor e gerar a chave Pix Copia e Cola na hora. Qualquer valor faz a diferença!";
-    } else if (lastUserMessage.includes('quem') || lastUserMessage.includes('trabalho') || lastUserMessage.includes('sobre') || lastUserMessage.includes('onde') || lastUserMessage.includes('historia')) {
-        reply = "Nosso abrigo fica dedicado ao resgate emergencial de cavalos debilitados, desnutridos e machucados. Nós trazemos eles, fornecemos tratamento veterinário completo, ração de qualidade e muito amor até estarem totalmente reabilitados. Quer nos apoiar nessa missão com uma doação hoje?";
+    if (lastUserMessage.includes('para onde') || lastUserMessage.includes('destinado') || lastUserMessage.includes('destino') || lastUserMessage.includes('onde vai') || lastUserMessage.includes('recurso')) {
+        reply = "Toda doação financeira que recebemos é direcionada para custear a compra direta de feno, vacinas, honorários de cirurgias, combustível para a caminhonete de resgate e manutenção básica do sítio de reabilitação. Cuidamos de cada centavo com muita responsabilidade!";
+    } else if (lastUserMessage.includes('acompanho') || lastUserMessage.includes('ver') || lastUserMessage.includes('instagram') || lastUserMessage.includes('rede social') || lastUserMessage.includes('fotos') || lastUserMessage.includes('noticia')) {
+        reply = "Nós publicamos diariamente as atualizações de todos os casos e novos resgates no nosso Instagram oficial e enviamos boletins informativos constantes para os doadores cadastrados. Você vai acompanhar de perto a recuperação dos cavalos!";
+    } else if (lastUserMessage.includes('veterinario') || lastUserMessage.includes('médico') || lastUserMessage.includes('cirurgia') || lastUserMessage.includes('clinica')) {
+        reply = "Sim, contamos com o apoio e parceria de excelentes clínicas de grandes animais e veterinários de campo especializados. Eles atendem nossas emergências a qualquer hora e nos oferecem descontos solidários em tratamentos complexos.";
+    } else if (lastUserMessage.includes('mensal') || lastUserMessage.includes('todo mes') || lastUserMessage.includes('mensalmente') || lastUserMessage.includes('fixa')) {
+        reply = "Seria maravilhoso! Através de doações recorrentes via Pix, você nos ajuda a ter uma receita fixa para o sustento contínuo das baias e tratamento diário dos animais resgatados. Qualquer valor ajuda muito!";
+    } else if (lastUserMessage.includes('voluntario') || lastUserMessage.includes('outra forma') || lastUserMessage.includes('ajudar de outra') || lastUserMessage.includes('insumo') || lastUserMessage.includes('ração') || lastUserMessage.includes('feno')) {
+        reply = "Aceitamos com muita alegria doações em insumos direto no nosso sítio (como sacos de ração, feno, remédios e cabrestos). Também abrimos vagas de voluntariado periódicas para ajudar no trato direto dos cavalos aos finais de semana. Fale conosco se tiver interesse!";
+    } else if (lastUserMessage.includes('como') || lastUserMessage.includes('doar') || lastUserMessage.includes('ajudar') || lastUserMessage.includes('pix') || lastUserMessage.includes('pagar') || lastUserMessage.includes('valor')) {
+        reply = "Para doar é super rápido: você pode clicar em qualquer um dos botões rápidos de valor (como 'R$ 20', 'R$ 50') bem acima desta barra de digitação. O chat se fechará e abrirá a tela com o Pix Copia e Cola gerado na hora!";
     } else if (lastUserMessage.includes('obrigado') || lastUserMessage.includes('obrigada') || lastMessageIsGreeting(lastUserMessage)) {
         if (lastMessageIsGreeting(lastUserMessage)) {
-            reply = "Olá! Seja muito bem-vindo. Eu sou o Ali! 🐴 É um prazer conversar com você. Gostaria de saber mais sobre o resgate de cavalos ou como você pode fazer uma doação?";
+            reply = "Olá! Seja muito bem-vindo. Eu sou o Ali! 🐴 É um prazer conversar com você. Gostaria de saber mais sobre o resgate de cavalos ou como fazer uma doação?";
         } else {
-            reply = "De coração, eu é que agradeço pelo carinho e pela visita! Se puder nos ajudar a alimentar os cavalos hoje, basta clicar no botão **'QUERO AJUDAR AGORA'** no site. Que Deus te abençoe! 🙏";
+            reply = "De coração, eu é que agradeço pelo carinho e pela visita! Se puder nos ajudar a alimentar os cavalos hoje, basta escolher um valor nos botões de doação acima. Que Deus te abençoe! 🙏";
         }
     }
     
