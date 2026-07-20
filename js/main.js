@@ -283,6 +283,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let timerInterval = null;
+    function startPixCountdown() {
+        const timerSpan = document.getElementById('pixTimer');
+        if (!timerSpan) return;
+        
+        let timeLeft = 600; // 10 minutes in seconds
+        
+        if (timerInterval) clearInterval(timerInterval);
+        
+        timerSpan.innerText = '10:00';
+        
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                timerSpan.innerText = 'Expirado';
+                return;
+            }
+            
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerSpan.innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    }
+
     // Checkout submission - Pix Generation Call
     if (btnDoarAgora) {
         btnDoarAgora.addEventListener('click', async () => {
@@ -296,6 +321,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show loading state
             btnDoarAgora.disabled = true;
             btnDoarAgora.innerText = 'GERANDO COBRANÇA PIX...';
+
+            const pixQrLoader = document.getElementById('pixQrLoader');
+            if (pixQrLoader) pixQrLoader.style.display = 'flex';
+            if (pixQrImg) pixQrImg.style.display = 'none';
 
             try {
                 const response = await fetch('/api/create-pix', {
@@ -327,6 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 pixQrImg.src = data.pix_qr_code;
                 pixCodeText.value = data.pix_copia_cola;
 
+                // Start timer
+                startPixCountdown();
+
                 // Move UI to Pix Display step
                 stepInputDiv.style.display = 'none';
                 stepPixDiv.style.display = 'block';
@@ -336,6 +368,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 btnDoarAgora.disabled = false;
                 btnDoarAgora.innerText = '❤️ GERAR PIX DE DOAÇÃO';
+                if (pixQrLoader) pixQrLoader.style.display = 'none';
+                if (pixQrImg) pixQrImg.style.display = 'block';
             }
         });
     }
@@ -355,6 +389,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 btnUpdatePix.disabled = true;
                 btnUpdatePix.innerText = '⚡ ATUALIZANDO COBRANÇA...';
+
+                const pixQrLoader = document.getElementById('pixQrLoader');
+                if (pixQrLoader) pixQrLoader.style.display = 'flex';
+                if (pixQrImg) pixQrImg.style.display = 'none';
 
                 try {
                     const response = await fetch('/api/create-pix', {
@@ -381,6 +419,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     pixQrImg.src = data.pix_qr_code;
                     pixCodeText.value = data.pix_copia_cola;
 
+                    // Restart timer on new update
+                    startPixCountdown();
+
                     // Transition container to success view
                     if (orderBumpPixContainer) {
                         orderBumpPixContainer.style.background = '#f0fdf4';
@@ -397,6 +438,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert(`Erro: ${err.message}`);
                     btnUpdatePix.disabled = false;
                     btnUpdatePix.innerText = '⚡ ATUALIZAR PIX COM VALOR EXTRA';
+                } finally {
+                    if (pixQrLoader) pixQrLoader.style.display = 'none';
+                    if (pixQrImg) pixQrImg.style.display = 'block';
                 }
             });
         }

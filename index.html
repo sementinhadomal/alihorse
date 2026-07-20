@@ -564,20 +564,50 @@
                     <span style="font-size: 3rem;">⚡</span>
                     <h3>Doação Pix Gerada!</h3>
                     <p>Leia o QR Code abaixo com o app do seu banco ou copie a chave Pix.</p>
+                    <!-- Countdown Timer -->
+                    <div id="pixTimerContainer" style="color: var(--color-accent); font-weight: bold; font-size: 0.9rem; margin-top: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.3rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>Expira em: <span id="pixTimer" style="font-variant-numeric: tabular-nums;">10:00</span></span>
+                    </div>
                 </div>
                 
                 <!-- QR Code Display -->
-                <div style="margin: 1.5rem auto; width: 200px; height: 200px; padding: 0.5rem; background: var(--color-white); border: 1px solid rgba(18,58,114,0.1); border-radius: var(--radius-sm);">
+                <div style="margin: 1.5rem auto; width: 200px; height: 200px; padding: 0.5rem; background: var(--color-white); border: 1px solid rgba(18,58,114,0.1); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; position: relative;">
+                    <!-- Loading Spinner -->
+                    <div id="pixQrLoader" style="display: none; flex-direction: column; align-items: center; gap: 0.5rem; color: var(--color-primary);">
+                        <style>
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                        </style>
+                        <div style="width: 36px; height: 36px; border: 3.5px solid rgba(18,58,114,0.1); border-top-color: var(--color-accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <span style="font-size: 0.75rem; font-weight: 700;">Gerando Pix...</span>
+                    </div>
                     <img id="pixQrImg" src="" alt="QR Code Pix" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
 
                 <!-- Copia e Cola Container -->
-                <div style="margin-bottom: 1.5rem;">
+                <div style="margin-bottom: 1rem;">
                     <label style="font-size:0.85rem; font-weight:600; color:var(--color-primary); display:block; margin-bottom:0.5rem;">Chave Pix Copia e Cola:</label>
                     <div style="display: flex; gap: 0.5rem; background: var(--color-bg); padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(18,58,114,0.15);">
                         <input type="text" id="pixCodeText" readonly style="border: none; background: transparent; width: 100%; font-family: monospace; font-size: 0.8rem; color: var(--color-text-dark); outline: none;">
                         <button id="btnCopyPix" class="btn btn-dark" style="padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 4px;">Copiar</button>
                     </div>
+                </div>
+
+                <!-- Pix Step by Step Guide -->
+                <div style="text-align: left; background: rgba(18,58,114,0.03); border-radius: 8px; padding: 0.75rem; margin-bottom: 1.25rem; border: 1px solid rgba(18,58,114,0.05);">
+                    <div style="font-size: 0.8rem; font-weight: 700; color: var(--color-primary); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.3rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span>Como pagar com o Pix Copia e Cola:</span>
+                    </div>
+                    <ol style="margin: 0; padding-left: 1.1rem; font-size: 0.75rem; color: var(--color-text-dark); display: flex; flex-direction: column; gap: 0.25rem; line-height: 1.35;">
+                        <li>Clique no botão <strong>Copiar</strong> acima.</li>
+                        <li>Abra o aplicativo do seu banco e acesse a área <strong>Pix</strong>.</li>
+                        <li>Escolha a opção <strong>Pix Copia e Cola</strong> e cole o código.</li>
+                        <li>Confirme os dados da doação e finalize a transferência.</li>
+                    </ol>
                 </div>
 
                 <!-- Order Bump at Pix Screen (Post-Generation Upsell) -->
