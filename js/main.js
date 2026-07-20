@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             orderBumpPixContainer.innerHTML = `
                 <div style="font-size: 0.85rem; color: var(--color-text-dark); font-weight: 500; line-height: 1.35; width: 100%;">
                     <span style="font-weight: 700; color: var(--color-primary); display: block; margin-bottom: 0.25rem;">🐴 Ajudar Mais Cavalos (Doação Extra)</span>
-                    Escolha um valor adicional para somar e apoiar no tratamento de outros cavalos resgatados:
+                    Escolha um valor adicional para apoiar no tratamento de outros cavalos resgatados. Ajude para que, da próxima vez, não precise chegar a essa urgência:
                 </div>
                 <div style="display: flex; gap: 1rem; margin: 0.15rem 0; width: 100%;">
                     <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-weight: bold; color: var(--color-primary); cursor: pointer; user-select: none;">
