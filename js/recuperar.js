@@ -46,7 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Fetch active UTM data from localStorage if available
                 let utmData = {};
                 try {
-                    utmData = JSON.parse(localStorage.getItem('utmify_data')) || {};
+                    utmData = JSON.parse(localStorage.getItem('ali_cavalos.utm')) || {};
+                    // If empty, fallback to Utmify specific local storage key
+                    if (!utmData.utm_source && !utmData.src) {
+                        const utmifyObj = JSON.parse(localStorage.getItem('utmify_data')) || {};
+                        utmData = { ...utmifyObj, ...utmData };
+                    }
                 } catch(e) {}
 
                 const response = await fetch('/api/create-pix', {
