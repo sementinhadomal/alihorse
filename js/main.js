@@ -334,30 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 pixQrImg.src = data.pix_qr_code;
                 pixCodeText.value = data.pix_copia_cola;
 
-                // Handle post-generation order bump display status
-                const orderBumpPixContainer = document.getElementById('orderBumpPixContainer');
-                if (orderBumpPixContainer) {
-                    if (orderBumpCheckbox && orderBumpCheckbox.checked) {
-                        orderBumpPixContainer.style.display = 'none';
-                    } else {
-                        // Reset to original check state
-                        orderBumpPixContainer.style.display = 'flex';
-                        orderBumpPixContainer.style.background = 'rgba(245, 158, 11, 0.06)';
-                        orderBumpPixContainer.style.borderColor = 'var(--color-accent)';
-                        orderBumpPixContainer.innerHTML = `
-                            <div style="display: flex; align-items: flex-start; gap: 0.75rem; width: 100%;">
-                                <input type="checkbox" id="orderBumpPixCheckbox" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--color-accent); margin-top: 2px;">
-                                <label for="orderBumpPixCheckbox" style="font-size: 0.85rem; color: var(--color-text-dark); cursor: pointer; font-weight: 500; user-select: none; line-height: 1.35; width: 100%;">
-                                    <span style="font-weight: 700; color: var(--color-primary); display: block; margin-bottom: 0.15rem;">🐴 Ajudar Mais Cavalos (+ R$ 15,00)</span>
-                                    Quero somar + R$ 15 para apoiar no resgate, alimentação e tratamento médico de outros cavalos abandonados.
-                                </label>
-                            </div>
-                            <button class="btn btn-primary" id="btnUpdatePix" style="width: 100%; border-radius: 6px; padding: 0.6rem; font-size: 0.9rem; display: none; background-color: var(--color-accent); color: var(--color-primary); font-weight: bold; border: none; cursor: pointer;">⚡ ATUALIZAR PIX COM R$ 15 EXTRA</button>
-                        `;
-                        setupPostBumpListeners();
-                    }
-                }
-
                 // Move UI to Pix Display step
                 stepInputDiv.style.display = 'none';
                 stepPixDiv.style.display = 'block';
@@ -369,68 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateButtonText(); // Restore button text
             }
         });
-    }
-
-    // Post-generation Order Bump update handler
-    function setupPostBumpListeners() {
-        const orderBumpPixCheckbox = document.getElementById('orderBumpPixCheckbox');
-        const btnUpdatePix = document.getElementById('btnUpdatePix');
-        const orderBumpPixContainer = document.getElementById('orderBumpPixContainer');
-
-        if (orderBumpPixCheckbox && btnUpdatePix) {
-            orderBumpPixCheckbox.addEventListener('change', () => {
-                btnUpdatePix.style.display = orderBumpPixCheckbox.checked ? 'block' : 'none';
-            });
-
-            btnUpdatePix.addEventListener('click', async () => {
-                const currentAmount = parseFloat(sessionStorage.getItem('first_pix_amount')) || 0;
-                const newAmount = currentAmount + 15;
-
-                btnUpdatePix.disabled = true;
-                btnUpdatePix.innerText = '⚡ ATUALIZANDO COBRANÇA...';
-
-                try {
-                    const response = await fetch('/api/create-pix', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            amount: newAmount.toString(),
-                            name: 'Doador Ali Cavalos (Update)',
-                            email: 'doador@alicavalos.org',
-                            cpf: '11111111111',
-                            utm: getUtmData()
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (!response.ok) throw new Error(data.error || 'Erro ao atualizar Pix');
-
-                    // Store new values
-                    sessionStorage.setItem('first_pix_qr', data.pix_qr_code);
-                    sessionStorage.setItem('first_pix_code', data.pix_copia_cola);
-                    sessionStorage.setItem('first_pix_amount', newAmount.toString());
-
-                    // Re-render elements
-                    pixQrImg.src = data.pix_qr_code;
-                    pixCodeText.value = data.pix_copia_cola;
-
-                    // Transition container to success view
-                    orderBumpPixContainer.style.background = '#f0fdf4';
-                    orderBumpPixContainer.style.borderColor = 'var(--color-success)';
-                    orderBumpPixContainer.innerHTML = `
-                        <div style="color: var(--color-success); font-weight: 600; display: flex; align-items: center; gap: 0.5rem; justify-content: center; width: 100%; padding: 0.25rem 0;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                            <span>Doação Atualizada! + R$ 15 inclusos no Pix acima.</span>
-                        </div>
-                    `;
-
-                } catch (err) {
-                    alert(`Erro: ${err.message}`);
-                    btnUpdatePix.disabled = false;
-                    btnUpdatePix.innerText = '⚡ ATUALIZAR PIX COM R$ 15 EXTRA';
-                }
-            });
-        }
     }
 
     // Copy Pix Chave to Clipboard
@@ -540,8 +454,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.history.pushState({ page: 2 }, "", "");
 
         window.addEventListener('popstate', (event) => {
-            // Redirect to recovery page when clicking back button
-            window.location.href = 'recuperar.html';
+            // Only redirect if they are actually going back to page 1 (trying to leave the site)
+            if (event.state && event.state.page === 1) {
+                window.location.href = 'recuperar.html';
+            }
         });
     }
 
