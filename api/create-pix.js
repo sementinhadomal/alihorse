@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { amount, name, email, cpf, utm } = req.body;
+        const { amount, name, email, cpf, utm, description } = req.body;
 
         if (!amount || parseFloat(amount) <= 0) {
             return res.status(400).json({ error: 'Valor de doação inválido.' });
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
             },
             body: JSON.stringify({
                 amount: amountInCents,
-                description: 'Doação Ali Cavalos Resgates',
+                description: description || 'Doação Ali Cavalos Resgates',
                 reference: 'ali_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
                 source: 'api_externa', // Bypasses productHash validation
                 customer: {

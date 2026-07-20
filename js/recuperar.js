@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let selectedValue = '15'; // Default selected value
+    let selectedValue = '30'; // Default selected value
 
     const valButtons = document.querySelectorAll('.val-btn');
     const btnDoarAgora = document.getElementById('btnDoarAgora');
@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         amount: selectedValue,
+                        description: 'Doação Ali Cavalos - Black Redirect (Recuperação)',
                         name: 'Doador Ali Cavalos (Recuperação)',
                         email: 'doador@alicavalos.org',
                         cpf: '11111111111',
