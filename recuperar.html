@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuda de Emergência | Ali Resgates</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .recuperar-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+        }
+        .recuperar-vsl-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            border-top: 5px solid #b91c1c;
+        }
+        .vsl-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .vsl-header h2 {
+            font-size: 1.8rem;
+            color: #b91c1c;
+            margin-bottom: 0.5rem;
+        }
+        .vsl-header p {
+            font-size: 1.05rem;
+            color: var(--color-text-dark);
+            font-weight: 600;
+        }
+        .donation-values-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 600px) {
+            .donation-values-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .val-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: 2px solid var(--color-primary);
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            background: white;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .val-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+        .val-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .back-to-site-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .back-link {
+            color: var(--color-text-muted);
+            text-decoration: underline;
+            font-size: 0.95rem;
+        }
+        .back-link:hover {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header" style="padding: 1rem 0; box-shadow: var(--shadow-sm); background: white;">
+        <div class="container" style="display: flex; justify-content: center;">
+            <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                <img src="assets/images/logo.png" alt="Ali Resgates" style="height: 40px; width: auto;">
+                <span style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--color-primary);">Ali Resgates</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="recuperar-container">
+        <div class="recuperar-vsl-card">
+            <div class="vsl-header">
+                <h2>🚨 ESPERE! NÃO VÁ EMBORA AINDA...</h2>
+                <p>Veja em 1 minuto por que cada pequena doação decide a vida deles agora.</p>
+            </div>
+
+            <!-- Video Player Block -->
+            <div class="hero-media-preview" id="heroMediaContainer" style="margin-bottom: 1.5rem; position: relative; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md);">
+                <img src="assets/images/capa_video_upsell.png" alt="Ajuda Emergencial Veterinária" style="width: 100%; height: 100%; object-fit: cover;">
+                <button class="play-overlay-btn" id="btnPlayHeroVideo" aria-label="Assistir vídeo de emergência" style="position: absolute; width: 70px; height: 70px; border-radius: 50%; background: var(--color-accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: var(--transition);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: var(--color-primary); margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </button>
+            </div>
+
+            <p style="text-align: center; font-size: 1.05rem; color: var(--color-text-dark); font-weight: 500; line-height: 1.5; margin-bottom: 1.5rem;">
+                Sabemos que as coisas estão difíceis, mas qualquer quantia ajuda a comprar ração e remédios. Escolha um valor abaixo para doar via Pix:
+            </p>
+
+            <div class="donation-values-row">
+                <button class="val-btn" data-value="10">R$ 10</button>
+                <button class="val-btn active" data-value="15">R$ 15</button>
+                <button class="val-btn" data-value="20">R$ 20</button>
+            </div>
+
+            <button class="btn btn-primary" id="btnDoarAgora" style="width: 100%; border-radius:12px; padding:1.1rem; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 0.5px;">❤️ GERAR PIX DE DOAÇÃO</button>
+
+            <div class="back-to-site-container">
+                <a href="index.html" class="back-link">Voltar para a página principal do abrigo</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/recuperar.js"></script>
+</body>
+</html>

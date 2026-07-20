@@ -294,13 +294,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error(data.error || 'Não foi possível gerar a transação no momento.');
                 }
 
-                // Render dynamic QR Code & Code in Step 2
-                pixQrImg.src = data.pix_qr_code;
-                pixCodeText.value = data.pix_copia_cola;
+                // Store details in sessionStorage
+                sessionStorage.setItem('first_pix_qr', data.pix_qr_code);
+                sessionStorage.setItem('first_pix_code', data.pix_copia_cola);
+                sessionStorage.setItem('first_pix_amount', finalVal);
 
-                // Move UI to Pix Display step
-                stepInputDiv.style.display = 'none';
-                stepPixDiv.style.display = 'block';
+                // Redirect to Upsell page
+                window.location.href = 'upsell.html';
 
             } catch (err) {
                 alert(`Erro: ${err.message}`);
@@ -405,4 +405,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Back Redirect Setup ---
+    function setupBackRedirect() {
+        // Prevent back redirect if we are already on recovery or upsell
+        if (window.location.pathname.includes('recuperar.html') || window.location.pathname.includes('upsell.html')) {
+            return;
+        }
+
+        // Push state twice to create a history entry
+        window.history.pushState({ page: 1 }, "", "");
+        window.history.pushState({ page: 2 }, "", "");
+
+        window.addEventListener('popstate', (event) => {
+            // Redirect to recovery page when clicking back button
+            window.location.href = 'recuperar.html';
+        });
+    }
+
+    setupBackRedirect();
 });

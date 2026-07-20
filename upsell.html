@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sua Doação Salva Vidas | Ali Resgates</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/components.css">
+    <style>
+        .upsell-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+        }
+        .pix-display-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+            border: 2px dashed var(--color-accent);
+            margin-bottom: 2rem;
+        }
+        .pix-display-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        .qr-code-img {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
+            margin: 1rem auto;
+            display: block;
+            border: 1px solid #ddd;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+        }
+        .pix-code-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-family: monospace;
+            font-size: 0.85rem;
+            resize: none;
+            margin: 0.5rem 0;
+            text-align: center;
+        }
+        .upsell-vsl-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+        .vsl-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .vsl-header h2 {
+            font-size: 1.8rem;
+            color: #b91c1c;
+            margin-bottom: 0.5rem;
+        }
+        .vsl-header p {
+            font-size: 1rem;
+            color: var(--color-text-dark);
+            font-weight: 500;
+        }
+        .upsell-options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .upsell-options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .upsell-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+            border-radius: 12px;
+            border: 2px solid var(--color-accent);
+            background: #fffdf5;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .upsell-btn:hover {
+            background: #fffbeb;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .upsell-btn-val {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        .upsell-btn-desc {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+        .skip-button-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .skip-link {
+            color: var(--color-text-muted);
+            text-decoration: underline;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+        .skip-link:hover {
+            color: var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header" style="padding: 1rem 0; box-shadow: var(--shadow-sm); background: white;">
+        <div class="container" style="display: flex; justify-content: center;">
+            <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+                <img src="assets/images/logo.png" alt="Ali Resgates" style="height: 40px; width: auto;">
+                <span style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--color-primary);">Ali Resgates</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="upsell-container">
+        <!-- Pix Status / Info Display -->
+        <div class="pix-display-card">
+            <h3>❤️ PIX DA SUA DOAÇÃO GERADO!</h3>
+            <p>Seu Pix de <strong id="txtFirstAmount" style="color: var(--color-primary); font-size: 1.1rem;">R$ 0,00</strong> foi gerado. Use os dados abaixo para pagar no aplicativo do seu banco:</p>
+            
+            <img src="" id="firstPixQr" class="qr-code-img" alt="QR Code Pix">
+            
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted);">PIX COPIA E COLA:</label>
+            <textarea id="firstPixCode" class="pix-code-textarea" readonly rows="2" onclick="this.select()"></textarea>
+            
+            <button class="btn btn-dark" id="btnCopyFirstPix" style="border-radius: 8px; padding: 0.75rem 1.5rem; font-size: 0.9rem; margin-top: 0.5rem; width: 100%;">📋 COPIAR CÓDIGO PIX</button>
+            <p id="copyStatusText" style="font-size: 0.85rem; color: var(--color-success); font-weight: 600; margin-top: 0.5rem; display: none;">✓ Código copiado para a área de transferência!</p>
+        </div>
+
+        <!-- VSL Video section -->
+        <div class="upsell-vsl-card">
+            <div class="vsl-header">
+                <h2>🚨 ESPERE! VOCÊ PODE NOS AJUDAR MAIS?</h2>
+                <p>Assista a este vídeo rápido de 1 minuto sobre o próximo resgate antes de realizar seu pagamento.</p>
+            </div>
+
+            <!-- Video Player Block -->
+            <div class="hero-media-preview" id="heroMediaContainer" style="margin-bottom: 1.5rem; position: relative; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md);">
+                <img src="assets/images/capa_video_upsell.png" alt="Ajuda Emergencial Veterinária" style="width: 100%; height: 100%; object-fit: cover;">
+                <button class="play-overlay-btn" id="btnPlayHeroVideo" aria-label="Assistir vídeo de emergência" style="position: absolute; width: 70px; height: 70px; border-radius: 50%; background: var(--color-accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0,0,0,0.3); transition: var(--transition);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color: var(--color-primary); margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </button>
+            </div>
+
+            <p style="text-align: center; font-size: 1rem; color: var(--color-text-dark); font-weight: 500; line-height: 1.5; margin-bottom: 1.5rem;">
+                Temos outro cavalo em situação grave aguardando exames de sangue e soros de hidratação. Gostaria de adicionar uma ajuda extra para garantir os insumos deste próximo resgate?
+            </p>
+
+            <div class="upsell-options-grid">
+                <div class="upsell-btn" data-upsell-value="15">
+                    <span class="upsell-btn-val">+ R$ 15,00</span>
+                    <span class="upsell-btn-desc">Soro e Curativo de Emergência</span>
+                </div>
+                <div class="upsell-btn" data-upsell-value="20">
+                    <span class="upsell-btn-val">+ R$ 20,00</span>
+                    <span class="upsell-btn-desc">Exames e Antibióticos</span>
+                </div>
+            </div>
+
+            <div class="skip-button-container">
+                <a href="index.html" class="skip-link">Não, quero apenas pagar a minha doação de R$ <span id="lblFirstAmount">0,00</span></a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Donation Modal (Checkout Redirect Modal) -->
+    <div class="checkout-modal" id="checkoutModal" aria-hidden="true" role="dialog">
+        <div class="checkout-content" style="max-width: 450px;">
+            <button class="checkout-close" id="checkoutClose" aria-label="Fechar checkout">&times;</button>
+            
+            <div id="checkoutStepPix" style="text-align: center;">
+                <div class="checkout-header" style="margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-primary);">❤️ Pix Extra Gerado!</h3>
+                    <p style="font-size: 0.95rem; color: var(--color-text-muted);">O Pix de sua doação extra foi gerado com sucesso. Copie o código abaixo:</p>
+                </div>
+                
+                <img src="" id="secondPixQr" class="qr-code-img" alt="QR Code Pix Extra">
+                
+                <textarea id="secondPixCode" class="pix-code-textarea" readonly rows="2" onclick="this.select()"></textarea>
+                
+                <button class="btn btn-primary" id="btnCopySecondPix" style="width: 100%; border-radius:8px; padding:1rem; margin-top: 1rem;">📋 COPIAR PIX EXTRA</button>
+                <p id="secondCopyStatusText" style="font-size: 0.85rem; color: var(--color-success); font-weight: 600; margin-top: 0.5rem; display: none;">✓ Copiado!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/upsell.js"></script>
+</body>
+</html>
