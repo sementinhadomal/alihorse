@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pixQrImg) pixQrImg.style.display = 'none';
 
             try {
-                /* Payload sent to Paradise Pay - Address & Phone are EXCLUDED to keep payload clean */
+                /* Payload sent to Paradise Pay & CAPI - Includes userAgent for Meta CAPI compliance */
                 const response = await fetch('/api/create-pix', {
                     method: 'POST',
                     headers: {
@@ -401,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         name: payerName,
                         email: 'doador@alicavalos.org',
                         cpf: '11111111111',
+                        userAgent: window.navigator.userAgent,
                         utm: getUtmData()
                     })
                 });
@@ -420,11 +421,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 pixQrImg.src = data.pix_qr_code;
                 pixCodeText.value = data.pix_copia_cola;
 
-                // Notify Utmify frontend script
+                // Notify Utmify frontend script with user_agent for Meta CAPI
                 try {
                     if (window.utmify && typeof window.utmify.track === 'function') {
-                        window.utmify.track('InitiateCheckout', { amount: parseFloat(finalVal) });
-                        window.utmify.track('PixGenerated', { amount: parseFloat(finalVal) });
+                        window.utmify.track('InitiateCheckout', { 
+                            amount: parseFloat(finalVal),
+                            client_user_agent: window.navigator.userAgent,
+                            user_agent: window.navigator.userAgent
+                        });
+                        window.utmify.track('PixGenerated', { 
+                            amount: parseFloat(finalVal),
+                            client_user_agent: window.navigator.userAgent,
+                            user_agent: window.navigator.userAgent
+                        });
                     }
                 } catch (uErr) {}
 

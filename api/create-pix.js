@@ -25,11 +25,16 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { amount, name, email, cpf, utm, description } = req.body;
+        const { amount, name, email, cpf, utm, description, userAgent } = req.body;
 
         if (!amount || parseFloat(amount) <= 0) {
             return res.status(400).json({ error: 'Valor de doação inválido.' });
         }
+
+        // Capture client User Agent and IP for Meta Conversions API (CAPI)
+        const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        const clientIp = rawIp ? rawIp.split(',')[0].trim() : '';
+        const clientUserAgent = userAgent || req.headers['user-agent'] || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
 
         // ParadisePags API Key from Environment Variables
         const apiKey = process.env.PARADISE_API_KEY || process.env.PARADISEPAGS_API_KEY;
@@ -63,15 +68,19 @@ export default async function handler(req, res) {
                 document: validDoc,
                 phone: '11987654321'
             },
-            tracking: utm ? {
-                utm_source: utm.utm_source || '',
-                utm_medium: utm.utm_medium || '',
-                utm_campaign: utm.utm_campaign || '',
-                utm_term: utm.utm_term || '',
-                utm_content: utm.utm_content || '',
-                src: utm.src || '',
-                sck: utm.sck || ''
-            } : undefined
+            tracking: {
+                utm_source: (utm && utm.utm_source) || '',
+                utm_medium: (utm && utm.utm_medium) || '',
+                utm_campaign: (utm && utm.utm_campaign) || '',
+                utm_term: (utm && utm.utm_term) || '',
+                utm_content: (utm && utm.utm_content) || '',
+                src: (utm && utm.src) || '',
+                sck: (utm && utm.sck) || '',
+                client_user_agent: clientUserAgent,
+                user_agent: clientUserAgent,
+                client_ip_address: clientIp,
+                client_ip: clientIp
+            }
         };
 
         // Call ParadisePags Gateway
@@ -98,7 +107,7 @@ export default async function handler(req, res) {
             qrCodeImage = 'data:image/png;base64,' + qrCodeImage;
         }
 
-        // Notify Utmify API server-side
+        // Notify Utmify API server-side (including client_user_agent and client_ip_address for Meta CAPI)
         try {
             const utmToken = process.env.UTMIFY_API_TOKEN || '6a58d5851448fa453642d0da';
             fetch('https://api.utmify.com.br/api/v1/orders', {
@@ -124,7 +133,13 @@ export default async function handler(req, res) {
                         name: 'Doação Ali Cavalos Resgates',
                         price: amountInCents
                     }],
-                    trackingParameters: utm || {}
+                    trackingParameters: {
+                        ...(utm || {}),
+                        client_user_agent: clientUserAgent,
+                        user_agent: clientUserAgent,
+                        client_ip_address: clientIp,
+                        client_ip: clientIp
+                    }
                 })
             }).catch(() => {});
         } catch (uErr) {}
